@@ -231,6 +231,18 @@ namespace EDDiscovery.UserControls
                     }
                 }
 
+                if (plotter.RouteMethod == RoutePlotter.Metric.AstarStandard)
+                {
+                    if (plotter.IsFromOrToNearInBubble())
+                    {
+                        DialogResult res = ExtendedControls.MessageBoxTheme.Show(FindForm(),
+                            string.Format(
+                                ("Using A* near the bubble will results in very long calculation times." + Environment.NewLine + "Are you sure you want to continue?").T(
+                                    EDTx.UserControlRoute_Confirm), PossibleJumps), "Warning".T(EDTx.Warning), MessageBoxButtons.YesNo);
+                        if (res != System.Windows.Forms.DialogResult.Yes) return;
+                    }
+                }
+
                 dataGridViewRoute.Rows.Clear();
                 routingthread = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(RoutingThread));
                 routingthread.Name = "Thread Route";
@@ -254,7 +266,7 @@ namespace EDDiscovery.UserControls
 
             routeSystems = null;    // so its null until route interative finishes
 
-            routeSystems = p.RouteIterative(AppendData);
+            routeSystems = p.RouteHandler(AppendData);
 
             this.BeginInvoke(new Action(() => 
                 {
